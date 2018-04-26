@@ -67,7 +67,7 @@ public class cheaters {
                     }
 
                 }
-                
+                //delete this
                 numberOfFiles++;
             }
             catch (FileNotFoundException e) {
