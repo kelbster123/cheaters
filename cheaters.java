@@ -1,6 +1,6 @@
 package assignment7;
 /*
- * EE422C Project 4 submission by
+ * EE422C Project 7 submission by
  * Varun Prabhu
  * vp6793
  * 15465
