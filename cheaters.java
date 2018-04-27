@@ -16,7 +16,7 @@ import java.util.*;
 
 public class cheaters {
 	
-	public static class CollisionObject {
+	public static class CollisionObject { // object containing two files' names and the number of identical phrases between them
 		int numCollisions;
 		String file1;
 		String file2;
@@ -28,7 +28,7 @@ public class cheaters {
 		}
 	}
 	
-	public static class CollisionComparator implements Comparator<CollisionObject> {
+	public static class CollisionComparator implements Comparator<CollisionObject> { // used to sort CollisionObjects from highest number of collisions to least number of collisions
 		public int compare(CollisionObject c1, CollisionObject c2) {
 			if (c1.numCollisions > c2.numCollisions) {
 				return -1;
@@ -41,6 +41,7 @@ public class cheaters {
 	}
 	
     public static void main(String[] args) {
+    	long time = System.nanoTime();
         if (args.length != 2 && args.length != 3) {
             System.out.println("Wrong number of input variables");
             System.exit(0);
@@ -52,11 +53,12 @@ public class cheaters {
         if (args.length == 3) {
         	limit = Integer.parseInt(args[2]);
         }
-
+        
+        
+        
+        
         LinkedHashMap<String, LinkedList<Integer>> similarities = new LinkedHashMap<>(1500000, .75f, false);
-
         HashMap<Integer, String> filesToName = new HashMap<>(1500, .75f);
-
         int numberOfFiles = 0;
 
         for (final File f : directory.listFiles()) {
@@ -107,20 +109,25 @@ public class cheaters {
             }
         }
         
-        int[][] collisions = new int[numberOfFiles][numberOfFiles];
         
-        for (String key : similarities.keySet()) {
-        	LinkedList<Integer> list = similarities.get(key);
+        
+        
+        // Determine number of collisions (phrases in common) between any two files
+        
+        int[][] collisions = new int[numberOfFiles][numberOfFiles]; // collisions[x][y] is the number of phrases that files x and y share
+        
+        for (String key : similarities.keySet()) { // loop through each list of files with identical phrases
+        	LinkedList<Integer> list = similarities.get(key); // list of files with a particular phrase in common
         	while (list.size() > 1) {
-        		int firstElem = list.remove();
-        		Iterator<Integer> it = list.iterator();
-        		HashSet<Integer> alreadyChecked = new HashSet<>();
+        		int firstElem = list.remove(); // next file at front of list
+        		Iterator<Integer> it = list.iterator(); // iterator through rest of list
+        		HashSet<Integer> alreadyChecked = new HashSet<>(); // if alreadyChecked.contains(x), then x has already been noted as having the particular phrase in common with the file at the front of the list
         		while (it.hasNext()) {
-        			int otherElem = it.next();
+        			int otherElem = it.next(); // some file that has the particular phrase
         			if (otherElem != firstElem && !alreadyChecked.contains(otherElem)) {
         				alreadyChecked.add(otherElem);
-        				int minElem;
-        				int maxElem;
+        				int minElem; // min of the file at the front of the list and the other file
+        				int maxElem; // max of the file at the front of the list and the other file
         				if (firstElem < otherElem) {
         					minElem = firstElem;
         					maxElem = otherElem;
@@ -128,13 +135,19 @@ public class cheaters {
         					minElem = otherElem;
         					maxElem = firstElem;
         				}
-        				collisions[minElem][maxElem]++;
+        				collisions[minElem][maxElem]++; // if it is found that two files have a phrase in common, increment the count for that pair
         			}
         		}
         	}
         }
         
-        Queue<CollisionObject> heap = new PriorityQueue<>(numberOfFiles*numberOfFiles, new CollisionComparator());
+        
+        
+        
+        // Heapsort pairs of files according to the number of collisions between the two files in a pair
+        // Print list of collision calculations to the console
+        
+        Queue<CollisionObject> heap = new PriorityQueue<>(numberOfFiles*numberOfFiles, new CollisionComparator()); // heap to sort pairs of files
         for (int row = 0; row < numberOfFiles; row++) {
         	for (int col = row + 1; col < numberOfFiles; col++) {
         		if (collisions[row][col] > limit) {
@@ -142,19 +155,25 @@ public class cheaters {
         		}
         	}
         }
-        
         while (!heap.isEmpty()) {
-        	CollisionObject colObj = heap.remove();
+        	CollisionObject colObj = heap.remove(); // pair of files with next highest number of collisions
         	System.out.println(colObj.numCollisions + ":\t" + colObj.file1 + ",\t" + colObj.file2);
         }
     }
     
-    public static String makeCaps(String input) {
-        String result = "";
-        char[] str = input.toCharArray();
+    
+    
+    
+    /**
+     * Capitalizes and removes punctuation from input String
+     * @param input is the String
+     * @return capitalized and punctuation-free String
+     */
+    private static String makeCaps(String input) {
+        String result = ""; // String to return
+        char[] str = input.toCharArray(); // transform String to char[] for faster char access
         for(int idx = 0; idx < str.length; idx++) {
             char c = str[idx];
-
             if((c >= 'A') && (c <= 'Z')) {
                 result += c;
             } else if((c >= 'a') && (c <= 'z')) {
