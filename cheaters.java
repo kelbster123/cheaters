@@ -43,7 +43,7 @@ public class cheaters {
     public static void main(String[] args) {
     	long time = System.nanoTime();
     	
-    	//this is when the user input is not correct and the program will not work
+    	//this is when the user input is not correct and the program will not work, so it exits
         if (args.length != 2 && args.length != 3) {
             System.out.println("Wrong number of input variables");
             System.exit(0);
