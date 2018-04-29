@@ -19,7 +19,7 @@ phrase in common will be displayed in the list.
 Our program successfully detects most examples of word-for-word plagiarism
 by indicating files with the highest number of n-word phrases in common. In
 addition, our program will output suspicious groups of files that are 
-particularity similar with each other. The lower bound on this similarity
+particularity similar to each other. The lower bound on this similarity
 is currently over 200 n word segments in common, but this can be changed. 
 Additionally, our program is time-efficient, producing meaningful output
 for the large set of documents in less than 7 seconds. Our program has no
