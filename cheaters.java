@@ -170,6 +170,9 @@ public class cheaters {
         
         Queue<CollisionObject> heap = new PriorityQueue<>(numberOfFiles*numberOfFiles, new CollisionComparator()); // heap to sort pairs of files
         
+        //This will be used to keep track of the groups of suspicious documents
+        ArrayList<Set<String>> suspicious = new ArrayList<Set<String>>();
+        
         for (int row = 0; row < numberOfFiles; row++) {
         	for (int col = row + 1; col < numberOfFiles; col++) {
         		if (collisions[row][col] > limit) {
@@ -177,11 +180,78 @@ public class cheaters {
         		}
         	}
         }
+        
         while (!heap.isEmpty()) {
         	CollisionObject colObj = heap.remove(); // pair of files with next highest number of collisions
+        	
+        	//artificially set the lower found on suspicion at 200 matching n word phrases, but this can be adjusted
+        	if(colObj.numCollisions > 200) {
+        		boolean found = false;
+        		Set<String> first = null;
+        		Set<String> second = null;
+        		
+        		//checks to see if either file in the pair of similar files has already been seen in a group
+        		for(Set<String> s : suspicious) {
+        			
+        			//if a file is in a group, note the set in which it appears and add both files to the set.
+        			if(s.contains(colObj.file1)) {
+        				first = s;
+        				first.add(colObj.file1);
+        				first.add(colObj.file2);
+        				found = true;
+        			}
+        			if(s.contains(colObj.file2)) {
+        				second = s;
+        				second.add(colObj.file1);
+        				second.add(colObj.file2);
+        				found = true;
+        			}
+        		}
+        		
+        		if(found) {
+        			//if here, we found that at least one of the files was already in a set
+        			//if we only found one, simply adding the other to the set containing the first completes the task (already done above)
+        			//if we found both of them, then we must check and see if we found them in the same set
+        			//if the two files were found in the same set, everything is fine. Otherwise, we must merge the two sets and remove one from the suspicious groups ArrayList
+        			if((first != null) && (second != null)) {
+        				if(!(first == second)) {
+        					first.addAll(second);
+        					suspicious.remove(second);
+        				}
+        			}
+        		} else {
+        			//if we did not find either file in the suspicious groups, we create a new group
+        			Set<String> newGroup = new HashSet<String>();
+        			newGroup.add(colObj.file1);
+        			newGroup.add(colObj.file2);
+        			suspicious.add(newGroup);
+        		}
+        		
+        		
+        	}
         
         	System.out.println(colObj.numCollisions + ":\t" + colObj.file1 + ",\t" + colObj.file2);
         }
+        
+        System.out.println();
+        
+        
+        System.out.println("The suspicious groups of documents are as follows:");
+        int groupNum = 1;
+        
+        //This chunk of code prints out all of the suspicious groups to the console
+        for(Set<String> s : suspicious) {
+        	String printOut = "Group " + groupNum + ":\t";
+        
+        	for(String fileName : s) {
+        		printOut += fileName + ", ";
+        	}
+        	printOut = printOut.substring(0, printOut.length()-2);
+        	System.out.println(printOut);
+        	groupNum++;
+        }
+        
+     
     }
     
     
