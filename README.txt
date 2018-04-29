@@ -23,4 +23,4 @@ particularity similar with each other. The lower bound on this similarity
 is currently over 200 n word segments in common, but this can be changed. 
 Additionally, our program is time-efficient, producing meaningful output
 for the large set of documents in less than 7 seconds. Our program has no
-known bugs in determining similarity of two text files.
+known bugs in determining similarity/plagiarism of two text files.
